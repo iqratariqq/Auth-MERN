@@ -12,13 +12,13 @@ const port=process.env.port||3000
 
 
 app.use(cors({
-  origin: "http://localhost:5173",   
+  origin: "https://auth-frontend-tawny-five.vercel.app",   
   credentials: true
 }));
 
 // Preflight requests (OPTIONS) ko handle karne ke liye
 app.options("*", cors({
-  origin: "http://localhost:5173",
+  origin: "https://auth-frontend-tawny-five.vercel.app",
   credentials: true
 }));
 
