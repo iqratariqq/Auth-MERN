@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const base_URL = "auth-mern-delta.vercel.app/api/auth";
+const base_URL = "https://backend-auth-mocha.vercel.app/api/auth";
 axios.defaults.withCredentials = true; // for set the cookies in frontend and backend and send the cookies from frontend to backend
 export const AuthStore = create((set) => ({
   user: null,
