@@ -11,5 +11,3 @@ all the packages
   npm i zustand ---for store states
   npm i cors ---to send request in backend
   
-MAILTRAP_TOKEN=402ac6461ae15ae07128a2c39ff44026 --iqra269
-7090de1fc1db9f7755e5749503fa32e4---iqratariq2912
