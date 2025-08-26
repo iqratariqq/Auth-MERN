@@ -26,6 +26,9 @@ app.options("*", cors({
 app.use(express.json());
 app.use(cookieParser());
 
+app.get("/", (req, res) => {
+  res.send("Welcome to the Auth API");
+});
 
 app.use("/api/auth",router);
 
