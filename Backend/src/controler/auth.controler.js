@@ -26,8 +26,9 @@ export const signup = async (req, res) => {
     }
 
     const haspassword = await bycryptjs.hash(password, 6);
-   const verificationToken = Math.floor(1000 + Math.random() * 9000).toString();
-
+    const verificationToken = Math.floor(
+      1000 + Math.random() * 9000
+    ).toString();
 
     const newUser = new User({
       email,
@@ -63,7 +64,7 @@ export const signup = async (req, res) => {
 
 export const verifyEmail = async (req, res) => {
   const { code } = req.body;
-      console.log("inside verify emai", code);
+  console.log("inside verify emai", code);
   try {
     const user = await User.findOne({
       verificationToken: code,
@@ -74,7 +75,7 @@ export const verifyEmail = async (req, res) => {
     if (!user) {
       res.json({
         success: false,
-        message: "invalid Token or Token has been expired"
+        message: "invalid Token or Token has been expired",
       });
     }
     user.isverified = true;
@@ -89,32 +90,33 @@ export const verifyEmail = async (req, res) => {
       message: "welcome email send successfully",
       user: { ...user._doc, password: undefined },
     });
- } catch (error) {
-  console.log("internal server error in verify email", error);
-  res.status(500).json({
-    success: false,
-    message: "internal server error",
-    error: error.message,
-  });
-}
-
+  } catch (error) {
+    console.log("internal server error in verify email", error);
+    res.status(500).json({
+      success: false,
+      message: "internal server error",
+      error: error.message,
+    });
+  }
 };
 
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("email and password in login",{email})
+    console.log("email  in login", { email });
     const user = await User.findOne({ email });
-    console.log('user in login',user)
+    console.log("user in login", user);
     if (!user) {
-      res
+      return res
         .status(400)
         .json({ success: false, message: "user not found,invalid Email" });
     }
 
-    const isPassword =  bycryptjs.compare(password, user.password);
+    const isPassword = await bycryptjs.compare(password, user.password);
     if (!isPassword) {
-      res.status(400).json({ success: false, message: "invalid Password" });
+      return res
+        .status(400)
+        .json({ success: false, message: "invalid Password" });
     }
 
     console.log("user in login", user);
@@ -122,7 +124,14 @@ export const login = async (req, res) => {
     console.log("user after generate token", user);
     user.lastlogin = Date();
     user.save();
-    res.status(200).json({ success: true, message: "login successfully" });
+    res.status(200).json({
+      success: true,
+      message: "login successfully",
+      user: {
+        ...user._doc,
+        password: undefined,
+      },
+    });
   } catch (error) {
     console.log("error in login", error);
     res.status(500).json("internal server error", error);
@@ -139,12 +148,11 @@ export const logout = async (req, res) => {
 };
 
 export const forgetPassword = async (req, res) => {
-
   const { email } = req.body;
-  console.log('email in forgetpassword controlers', {email});
+  console.log("email in forgetpassword controlers", { email });
   try {
     const user = await User.findOne({ email });
-    
+
     if (!user) {
       return res
         .status(400)
@@ -176,20 +184,23 @@ export const resetPassword = async (req, res) => {
   try {
     const { token } = req.params;
     const { password } = req.body;
-    console.log("token and password in reset password in controler of reset password", { token, password });
+    console.log(
+      "token and password in reset password in controler of reset password",
+      { token, password }
+    );
     const user = await User.findOne({
       resetPasswordToken: token,
       resetPasswordTokenExpireAt: { $gt: Date.now() },
     });
     console.log("user in reset password", user);
     if (!user) {
-     return res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: "invalid token or  token has been expired",
       });
     }
 
-    const hashPassword = bycryptjs.hash(password,6);
+    const hashPassword = await bycryptjs.hash(password, 6);
     user.password = hashPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordTokenExpireAt = undefined;
@@ -210,18 +221,17 @@ export const checkAuth = async (req, res) => {
   try {
     console.log("inside try block of checkAAuth controller");
     const user = await User.findById(req.userId).select("-password");
-    console.log("user in await of authcheck controler",user)
+    console.log("user in await of authcheck controler", user);
     if (!user) {
       res
-      .status(400)
-      .json({ success: false, message: "user not found,invalid Email" });
+        .status(400)
+        .json({ success: false, message: "user not found,invalid Email" });
     }
-    console.log(user.email, "user in auth check")
+    console.log(user.email, "user in auth check");
 
     res.status(200).json({ success: true, user });
   } catch (error) {
     console.log("error in authcheck in checkout function", error);
-    res.status(500).json("internal server error", error)
+    res.status(500).json("internal server error", error);
   }
 };
-
