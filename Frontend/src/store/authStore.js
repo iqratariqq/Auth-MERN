@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const base_URL = "https://backend-auth-mocha.vercel.app/api/auth";
+const base_URL = "http://localhost:3000/api/auth";
 axios.defaults.withCredentials = true; // for set the cookies in frontend and backend and send the cookies from frontend to backend
 export const AuthStore = create((set) => ({
   user: null,
@@ -71,7 +71,7 @@ export const AuthStore = create((set) => ({
         password,
       });
       set({
-        user: response.data.newUser,
+        user: response.data.user,
         isAuthenticated: true,
         isLoading: false,
       });
